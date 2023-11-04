@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'build.vsh'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: vlang/v
+        
+    - uses: actions/checkout@v4
+      with:
+        path: app
+
+    - name: Build V
+      run: make && sudo ./v symlink
+    
+    - name: Tests
+      run: cd app && v -stats test src
+    
+    - name: Build
+      run: cd app && v -prod -shared src
